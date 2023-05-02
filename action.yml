@@ -1,0 +1,28 @@
+name: Deploy SFTP
+description: 'Upload files over SFTP'
+runs:
+  using: 'composite'
+  steps:
+    - run: |
+        echo "
+          $(find . -type d | sed -e 's/^/mkdir /;')
+          mput -r .
+          exit
+        " > /tmp/sftp_commands
+        echo ${{github.event.inputs.secret_key }} > /tmp/sk
+        sftp -i /tmp/sk ${{ github.event.inputs.username }}@${{ github.event.inputs.host }}:${{github.events.input.path }} < /tmp/sftp_commands
+        rm /tmp/sk
+      shell: bash
+inputs:
+  host:
+    description: 'The host to upload files to'
+    required: true
+  username:
+    description: 'sftp username'
+    required: true
+  path:
+    description: 'absolute path on the destination server where files are uploaded'
+    required: true
+  secret_key:
+    description: 'the secret key granting the username access to the server at server_url'
+    required: true
