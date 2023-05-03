@@ -1,5 +1,5 @@
-name: Deploy SFTP
-description: 'Upload files over SFTP'
+name: Deploy to Server
+description: 'Upload repository files to a server'
 runs:
   using: 'composite'
   steps:
@@ -9,7 +9,7 @@ runs:
           mput -r .
           exit
         " > /tmp/sftp_commands
-        echo ${{github.event.inputs.secret_key }} > /tmp/sk
+        echo "${{ github.event.inputs.secret_key }}" > /tmp/sk
         sftp -i /tmp/sk ${{ github.event.inputs.username }}@${{ github.event.inputs.host }}:${{github.events.input.path }} < /tmp/sftp_commands
         rm /tmp/sk
       shell: bash
