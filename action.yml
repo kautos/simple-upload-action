@@ -3,15 +3,16 @@ description: 'Upload repository files to a server'
 runs:
   using: 'composite'
   steps:
-    - run: |
-        echo "
-          $(find . -type d | sed -e 's/^/mkdir /;')
-          mput -r .
-          exit
-        " > /tmp/sftp_commands
-        echo "${{ github.event.inputs.secret_key }}" > /tmp/sk
-        sftp -i /tmp/sk ${{ github.event.inputs.username }}@${{ github.event.inputs.host }}:${{github.events.input.path }} < /tmp/sftp_commands
-        rm /tmp/sk
+    -  uses: actions/checkout@v2
+    -  run: |
+        ssh-keyscan -p ${{github.events.input.port }} ${{ github.event.inputs.host }} > known_hosts
+        echo "${{ github.event.inputs.secret_key }}" > sk
+        chmod 400 sk
+        ssh -o UserKnownHostsFile=known_hosts -i sk -p ${{github.events.input.port }} \
+            ${{ github.event.inputs.username }}@${{ github.event.inputs.host }} 'rm -rf ${{github.events.input.path }}/*'
+        scp -B -o UserKnownHostsFile=known_hosts -i sk -P ${{github.events.input.port }} -r public \
+            ${{ github.event.inputs.username }}@$${{ github.event.inputs.host }}:${{github.events.input.path }}
+        rm -f sk
       shell: bash
 inputs:
   host:
