@@ -24,6 +24,9 @@ inputs:
   path:
     description: 'absolute path on the destination server where files are uploaded'
     required: true
+  port:
+    description: 'ssh port'
+    required: true
   secret_key:
     description: 'the secret key granting the username access to the server at server_url'
     required: true
