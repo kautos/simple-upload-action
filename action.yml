@@ -3,8 +3,11 @@ description: 'Upload repository files to a server'
 runs:
   using: 'composite'
   steps:
-    -  uses: actions/checkout@v2
-    -  run: |
+    - name: checkout
+      uses: actions/checkout@v2
+    - name: execute
+      shell: bash
+      run: |
         ssh-keyscan -p ${{github.events.input.port }} ${{ github.event.inputs.host }} > known_hosts
         echo "${{ github.event.inputs.secret_key }}" > sk
         chmod 400 sk
@@ -13,7 +16,6 @@ runs:
         scp -B -o UserKnownHostsFile=known_hosts -i sk -P ${{github.events.input.port }} -r public \
             ${{ github.event.inputs.user }}@$${{ github.event.inputs.host }}:${{github.events.input.path }}
         rm -f sk
-      shell: bash
 inputs:
   host:
     description: 'The host to upload files to'
