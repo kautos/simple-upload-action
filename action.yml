@@ -11,7 +11,7 @@ runs:
         ssh-keyscan -p ${{ inputs.port }} ${{ inputs.host }} > known_hosts
         echo "${{ inputs.secret_key }}" > sk
         chmod 400 sk
-        ssh -o UserKnownHostsFile=known_hosts -i sk -p ${{ inputs.port }} ${{ inputs.user }}@${{ inputs.host }} 'rm -rf ${{ inputs.path }}*'
+        ssh -o UserKnownHostsFile=known_hosts -i sk -p ${{ inputs.port }} ${{ inputs.user }}@${{ inputs.host }} 'rm -rf ${{ inputs.path }}public'
         scp -B -o UserKnownHostsFile=known_hosts -i sk -P ${{ inputs.port }} -r public ${{ inputs.user }}@$${{ inputs.host }}:${{ inputs.path }}
         rm -f sk
 inputs:
