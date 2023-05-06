@@ -8,13 +8,13 @@ runs:
     - name: execute
       shell: bash
       run: |
-        ssh-keyscan -p ${{ github.event.inputs.port }} ${{ github.event.inputs.host }} > known_hosts
-        echo "${{ github.event.inputs.secret_key }}" > sk
+        ssh-keyscan -p ${{ inputs.port }} ${{ inputs.host }} > known_hosts
+        echo "${{ inputs.secret_key }}" > sk
         chmod 400 sk
-        ssh -o UserKnownHostsFile=known_hosts -i sk -p ${{ github.event.inputs.port }} \
-            ${{ github.event.inputs.user }}@${{ github.event.inputs.host }} 'rm -rf ${{ github.event.inputs.path }}/*'
-        scp -B -o UserKnownHostsFile=known_hosts -i sk -P ${{ github.event.inputs.port }} -r public \
-            ${{ github.event.inputs.user }}@$${{ github.event.inputs.host }}:${{ github.event.inputs.path }}
+        ssh -o UserKnownHostsFile=known_hosts -i sk -p ${{ inputs.port }} \
+            ${{ inputs.user }}@${{ inputs.host }} 'rm -rf ${{ inputs.path }}/*'
+        scp -B -o UserKnownHostsFile=known_hosts -i sk -P ${{ inputs.port }} -r public \
+            ${{ inputs.user }}@$${{ inputs.host }}:${{ inputs.path }}
         rm -f sk
 inputs:
   host:
