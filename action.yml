@@ -8,7 +8,7 @@ runs:
     - name: execute
       shell: bash
       run: |
-        ssh-keyscan -p ${{github.events.input.port }} ${{ github.event.inputs.host }} > known_hosts
+        ssh-keyscan -p ${{ github.events.inputs.port }} ${{ github.event.inputs.host }} > known_hosts
         echo "${{ github.event.inputs.secret_key }}" > sk
         chmod 400 sk
         ssh -o UserKnownHostsFile=known_hosts -i sk -p ${{github.events.input.port }} \
