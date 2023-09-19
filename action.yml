@@ -11,8 +11,13 @@ runs:
         ssh-keyscan -p ${{ inputs.port }} ${{ inputs.host }} > known_hosts
         echo "${{ inputs.secret_key }}" > sk
         chmod 400 sk
-        ssh -o UserKnownHostsFile=known_hosts -i sk -p ${{ inputs.port }} ${{ inputs.user }}@${{ inputs.host }} 'rm -rf ${{ inputs.path }}public'
-        scp -B -o UserKnownHostsFile=known_hosts -i sk -P ${{ inputs.port }} -r public ${{ inputs.user }}@${{ inputs.host }}:${{ inputs.path }}
+        # Loop through non-hidden files in a dir one by one
+        for file in *; do
+            # delete the existing remote file by the same name
+            ssh -o UserKnownHostsFile=known_hosts -i sk -p ${{ inputs.port }} ${{ inputs.user }}@${{ inputs.host }} 'rm -rf {{inputs.path}}/"$file"'
+            # upload new version of file
+            scp -B -o UserKnownHostsFile=known_hosts -i sk -P ${{ inputs.port }} -r "$file" ${{ inputs.user }}@${{ inputs.host }}:${{ inputs.path }}
+        done
         rm -f sk
 inputs:
   host:
